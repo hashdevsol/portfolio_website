@@ -1,0 +1,638 @@
+<title>Muhammad Ali — MERN Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+/* Layout: sticky rail nav + full-bleed sections on a 1120px measure; mono eyebrows mark each block, content sits on a single 12-col grid that collapses to 1 col under 760px. */
+:root{
+  --bg:#F1F3F7;
+  --surface:#FFFFFF;
+  --surface-2:#E7EAF2;
+  --fg:#111622;
+  --muted:#5A6276;
+  --line:#D4D9E5;
+  --accent:#1F46E8;
+  --accent-soft:#E2E7FF;
+  --amber:#C97A14;
+  --shadow:0 1px 2px rgba(17,22,34,.06),0 12px 32px -18px rgba(17,22,34,.35);
+
+  --display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --body:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0E16;
+    --surface:#141926;
+    --surface-2:#1C2231;
+    --fg:#EEF1F8;
+    --muted:#9AA3B8;
+    --line:#2A3144;
+    --accent:#7D95FF;
+    --accent-soft:#1B2340;
+    --amber:#E8A43C;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 18px 40px -20px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0E16;
+  --surface:#141926;
+  --surface-2:#1C2231;
+  --fg:#EEF1F8;
+  --muted:#9AA3B8;
+  --line:#2A3144;
+  --accent:#7D95FF;
+  --accent-soft:#1B2340;
+  --amber:#E8A43C;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 18px 40px -20px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--body);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.05;letter-spacing:-.02em}
+p{margin:0}
+a{color:inherit}
+img{max-width:100%}
+::selection{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding-inline:20px}
+.section{padding-block:clamp(56px,8vw,104px);border-top:1px solid var(--line)}
+.eyebrow{
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:center;gap:10px;margin-bottom:18px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);display:block}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:20px 48px;align-items:end;margin-bottom:40px}
+.sec-head h2{font-size:clamp(28px,4.2vw,44px);font-weight:800}
+.sec-head p{color:var(--muted);font-size:15.5px;min-width:0}
+@media (max-width:860px){.sec-head{grid-template-columns:1fr}}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:50;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;letter-spacing:-.03em;font-size:17px;text-decoration:none}
+.mark{
+  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
+  background:var(--accent);color:#fff;font-family:var(--mono);font-size:12px;font-weight:600;
+}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font-size:14px;text-decoration:none;color:var(--muted)}
+.nav-links a:hover{color:var(--fg)}
+.nav-cta{
+  font-size:14px;text-decoration:none;padding:9px 16px;border-radius:999px;
+  background:var(--fg);color:var(--bg);font-weight:600;
+}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:7px 11px;font-family:var(--mono);font-size:12px;cursor:pointer}
+@media (max-width:860px){
+  .nav-links{display:none}
+  .menu-btn{display:block}
+  .nav-links.open{
+    display:flex;position:absolute;left:0;right:0;top:62px;flex-direction:column;align-items:flex-start;
+    gap:4px;padding:14px 20px 20px;background:var(--bg);border-bottom:1px solid var(--line)
+  }
+  .nav-links.open a{padding:8px 0;font-size:16px}
+}
+
+/* ---------- hero ---------- */
+.hero{padding-block:clamp(48px,7vw,86px) clamp(40px,6vw,72px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(28px,5vw,60px);align-items:center}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}}
+.status{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+  padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#19A974;box-shadow:0 0 0 4px color-mix(in srgb,#19A974 22%,transparent)}
+.hero h1{font-size:clamp(40px,7.4vw,76px);font-weight:800;margin:20px 0 0}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{margin-top:20px;font-size:clamp(16px,1.9vw,19px);color:var(--muted);max-width:56ch}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:10px;
+  font-weight:600;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;font-family:var(--body);
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{border-color:var(--line);background:var(--surface);color:var(--fg)}
+.btn-ghost:hover{border-color:var(--accent)}
+
+.code-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+  overflow:hidden;min-width:0;
+}
+.code-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.code-bar span{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.code-bar b{margin-left:8px;font-family:var(--mono);font-size:11.5px;font-weight:400;color:var(--muted)}
+.code-card pre{
+  margin:0;padding:18px 16px;font-family:var(--mono);font-size:12.5px;line-height:1.85;
+  overflow-x:auto;color:var(--fg);
+}
+.k{color:var(--accent)}
+.s{color:var(--amber)}
+.c{color:var(--muted)}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:clamp(36px,5vw,56px)}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--surface);padding:22px 20px}
+.stat b{display:block;font-family:var(--display);font-size:clamp(26px,3.4vw,34px);font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- about ---------- */
+.about{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(28px,5vw,56px)}
+@media (max-width:860px){.about{grid-template-columns:1fr}}
+.about p + p{margin-top:16px}
+.about p{color:var(--muted);font-size:16.5px}
+.about strong{color:var(--fg);font-weight:600}
+.facts{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:6px 20px;min-width:0}
+.fact{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.fact:last-child{border-bottom:0}
+.fact span{color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.fact b{font-weight:600;text-align:right;min-width:0}
+
+/* ---------- skills ---------- */
+.skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 56px}
+@media (max-width:760px){.skills{grid-template-columns:1fr}}
+.skill{min-width:0}
+.skill-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:8px}
+.skill-top b{font-weight:600;font-size:15.5px}
+.skill-top i{font-style:normal;font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+
+.stack{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:48px}
+.tech{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tech b{font-size:14.5px;font-weight:600}
+.tech span{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- projects ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.filter{
+  font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+  padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  color:var(--muted);cursor:pointer;
+}
+.filter[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:20px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  display:flex;flex-direction:column;min-width:0;
+}
+.card:hover{border-color:var(--accent)}
+.thumb{height:132px;display:flex;align-items:flex-end;padding:14px;position:relative;overflow:hidden}
+.thumb::after{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:26px 26px;opacity:.45;
+}
+.thumb b{
+  position:relative;z-index:1;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-weight:400;color:var(--muted);
+}
+.card-body{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card-body h3{font-size:19px;font-weight:700}
+.card-body p{color:var(--muted);font-size:14.5px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
+.tag{font-family:var(--mono);font-size:11px;padding:4px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted)}
+.metric{
+  display:flex;align-items:center;gap:7px;font-size:13px;color:var(--amber);font-weight:600;
+}
+
+/* ---------- experience ---------- */
+.timeline{display:grid;gap:0;border-left:2px solid var(--line);padding-left:26px;margin-left:6px}
+.job{padding-bottom:30px;position:relative}
+.job:last-child{padding-bottom:0}
+.job::before{content:"";position:absolute;left:-33px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--accent)}
+.job time{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+.job h3{font-size:19px;font-weight:700;margin:6px 0 2px}
+.job .where{color:var(--accent);font-size:14.5px;font-weight:600}
+.job p{color:var(--muted);font-size:15px;margin-top:8px;max-width:68ch}
+
+/* ---------- testimonials ---------- */
+.quotes{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.quote{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.stars{color:var(--amber);font-size:13px;letter-spacing:3px}
+.quote p{font-size:15.5px;flex:1}
+.who{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:14px}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-family:var(--display);font-weight:800;font-size:14px;flex:none}
+.who b{display:block;font-size:14.5px;font-weight:600}
+.who span{font-size:13px;color:var(--muted)}
+
+/* ---------- contact ---------- */
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(28px,5vw,56px)}
+@media (max-width:860px){.contact{grid-template-columns:1fr}}
+.copyrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.copyrow code{font-family:var(--mono);font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;word-break:break-all}
+.mini{font-size:13px;color:var(--muted);font-family:var(--mono)}
+form{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:14px;min-width:0}
+.field{display:grid;gap:6px;min-width:0}
+label{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+input,textarea,select{
+  font-family:var(--body);font-size:15px;color:var(--fg);background:var(--bg);
+  border:1px solid var(--line);border-radius:9px;padding:11px 13px;width:100%;
+}
+textarea{resize:vertical;min-height:110px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+.sent{background:var(--accent-soft);color:var(--accent);border-radius:9px;padding:12px 14px;font-size:14px;font-weight:600}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);font-size:13.5px}
+.foot{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+.foot nav{display:flex;gap:18px;flex-wrap:wrap}
+.foot a{text-decoration:none}
+.foot a:hover{color:var(--fg)}
+
+@media (prefers-reduced-motion:no-preference){
+  .card,.btn,.filter,.quote{transition:border-color .18s ease,transform .18s ease,filter .18s ease}
+  .card:hover{transform:translateY(-2px)}
+}
+</style>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top"><span class="mark">MA</span>Muhammad Ali</a>
+    <nav class="nav-links" id="navlinks">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#reviews">Reviews</a>
+      <a class="nav-cta" href="#contact">Hire me</a>
+    </nav>
+    <button class="menu-btn" id="menubtn" aria-expanded="false" aria-controls="navlinks">MENU</button>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <span class="status"><span class="dot"></span>Available for new projects — Nov 2026</span>
+        <h1>I build fast, <em>production-grade</em> web apps with the MERN stack.</h1>
+        <p class="hero-sub">Full-stack developer with 5 years shipping React front-ends and Node APIs for startups and agencies. I take projects from an empty repo to a monitored deployment — and stay for the parts most people skip: auth, payments, performance and uptime.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#work">View selected work</a>
+          <a class="btn btn-ghost" href="#contact">Start a project</a>
+        </div>
+      </div>
+
+      <div class="code-card">
+        <div class="code-bar"><span></span><span></span><span></span><b>server/routes/profile.js</b></div>
+<pre><code><span class="c">// whoami</span>
+<span class="k">const</span> developer = {
+  name:     <span class="s">"Muhammad Ali"</span>,
+  role:     <span class="s">"Full-Stack Web Developer"</span>,
+  stack:    [<span class="s">"Mongo"</span>, <span class="s">"Express"</span>, <span class="s">"React"</span>, <span class="s">"Node"</span>],
+  years:    <span class="s">5</span>,
+  shipped:  <span class="s">42</span>,
+  timezone: <span class="s">"UTC+5"</span>,
+  openTo:   [<span class="s">"contract"</span>, <span class="s">"full-time"</span>]
+};
+
+router.<span class="k">get</span>(<span class="s">"/hire"</span>, (req, res) =&gt;
+  res.status(<span class="s">200</span>).json(developer)
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>5+</b><span>Years building</span></div>
+      <div class="stat"><b>42</b><span>Projects shipped</span></div>
+      <div class="stat"><b>31</b><span>Happy clients</span></div>
+      <div class="stat"><b>99.9%</b><span>Uptime maintained</span></div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap">
+      <p class="eyebrow">About</p>
+      <div class="about">
+        <div>
+          <h2 style="font-size:clamp(26px,3.6vw,38px);font-weight:800;margin-bottom:20px">A developer who thinks in requests per second, not just pixels.</h2>
+          <p>I started in 2021 patching a slow Express API for a logistics startup and never left the backend. Five years later I work across the whole MERN stack — React and Next.js on the front, Node, Express and MongoDB behind it — with a bias toward apps that have to stay up under real traffic.</p>
+          <p>Most of my work falls into three shapes: <strong>SaaS dashboards</strong> with roles, billing and audit trails; <strong>marketplaces</strong> where payments and search have to be correct; and <strong>rescue jobs</strong> where an existing codebase needs a performance pass before it buckles. I write tested code, document the handover, and leave clients with something their next developer can read.</p>
+          <p>Outside client work I maintain two small open-source packages for Mongoose pagination and review pull requests for a React component library.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><span>Based in</span><b>Lahore, Pakistan · UTC+5</b></div>
+          <div class="fact"><span>Experience</span><b>5 years</b></div>
+          <div class="fact"><span>Focus</span><b>MERN · Next.js · TypeScript</b></div>
+          <div class="fact"><span>Engagements</span><b>Contract · Retainer · Full-time</b></div>
+          <div class="fact"><span>Languages</span><b>English, Urdu</b></div>
+          <div class="fact"><span>Response time</span><b>Under 12 hours</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="skills">
+    <div class="wrap">
+      <p class="eyebrow">Skills</p>
+      <div class="sec-head">
+        <h2>What I'm strongest at</h2>
+        <p>Self-assessed depth across the work I take on most often. The honest version: deep in the middle of the stack, capable at the edges.</p>
+      </div>
+
+      <div class="skills">
+        <div class="skill"><div class="skill-top"><b>React &amp; Next.js</b><i>95%</i></div><div class="bar"><i style="width:95%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>Node.js &amp; Express</b><i>93%</i></div><div class="bar"><i style="width:93%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>MongoDB &amp; Mongoose</b><i>90%</i></div><div class="bar"><i style="width:90%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>TypeScript</b><i>88%</i></div><div class="bar"><i style="width:88%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>REST &amp; GraphQL APIs</b><i>86%</i></div><div class="bar"><i style="width:86%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>Auth, Payments &amp; Security</b><i>84%</i></div><div class="bar"><i style="width:84%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>Testing (Jest, Playwright)</b><i>80%</i></div><div class="bar"><i style="width:80%"></i></div></div>
+        <div class="skill"><div class="skill-top"><b>Docker &amp; CI/CD</b><i>76%</i></div><div class="bar"><i style="width:76%"></i></div></div>
+      </div>
+
+      <div class="stack">
+        <div class="tech"><b>React 18</b><span>Frontend</span></div>
+        <div class="tech"><b>Next.js 14</b><span>Frontend</span></div>
+        <div class="tech"><b>TypeScript</b><span>Language</span></div>
+        <div class="tech"><b>Redux Toolkit</b><span>State</span></div>
+        <div class="tech"><b>Tailwind CSS</b><span>Styling</span></div>
+        <div class="tech"><b>Node.js</b><span>Runtime</span></div>
+        <div class="tech"><b>Express</b><span>Backend</span></div>
+        <div class="tech"><b>MongoDB</b><span>Database</span></div>
+        <div class="tech"><b>PostgreSQL</b><span>Database</span></div>
+        <div class="tech"><b>Redis</b><span>Cache</span></div>
+        <div class="tech"><b>Socket.IO</b><span>Realtime</span></div>
+        <div class="tech"><b>Stripe</b><span>Payments</span></div>
+        <div class="tech"><b>AWS S3 &amp; EC2</b><span>Infra</span></div>
+        <div class="tech"><b>Docker</b><span>Infra</span></div>
+        <div class="tech"><b>GitHub Actions</b><span>CI/CD</span></div>
+        <div class="tech"><b>Jest &amp; Playwright</b><span>Testing</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="work">
+    <div class="wrap">
+      <p class="eyebrow">Selected work</p>
+      <div class="sec-head">
+        <h2>Six projects, six different problems</h2>
+        <p>Case studies from the last three years. Figures are from client analytics after launch.</p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter projects by type">
+        <button class="filter" data-f="all" aria-pressed="true">All</button>
+        <button class="filter" data-f="saas" aria-pressed="false">SaaS</button>
+        <button class="filter" data-f="commerce" aria-pressed="false">Commerce</button>
+        <button class="filter" data-f="realtime" aria-pressed="false">Realtime</button>
+      </div>
+
+      <div class="projects" id="projects">
+
+        <article class="card" data-type="saas">
+          <div class="thumb" style="background:linear-gradient(135deg,var(--accent-soft),var(--surface-2))"><b>SaaS · 2026</b></div>
+          <div class="card-body">
+            <h3>Meridian Analytics</h3>
+            <p>Multi-tenant reporting dashboard for 40+ agency clients. Built the role system, Stripe metered billing, and a query layer that aggregates 12M events a month.</p>
+            <div class="metric">↘ Report load time cut from 9s to 1.2s</div>
+            <div class="tags"><span class="tag">Next.js</span><span class="tag">Node</span><span class="tag">MongoDB</span><span class="tag">Stripe</span><span class="tag">Redis</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-type="commerce">
+          <div class="thumb" style="background:linear-gradient(135deg,var(--surface-2),var(--accent-soft))"><b>Commerce · 2025</b></div>
+          <div class="card-body">
+            <h3>Thread &amp; Tonic</h3>
+            <p>Headless storefront for a 2,400-SKU clothing label. Faceted search, guest checkout, and an admin that the client's two-person team actually uses daily.</p>
+            <div class="metric">↗ 34% lift in checkout completion</div>
+            <div class="tags"><span class="tag">React</span><span class="tag">Express</span><span class="tag">MongoDB</span><span class="tag">Algolia</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-type="realtime">
+          <div class="thumb" style="background:linear-gradient(135deg,var(--accent-soft),var(--surface-2))"><b>Realtime · 2025</b></div>
+          <div class="card-body">
+            <h3>Dispatch Grid</h3>
+            <p>Live fleet tracking for a regional courier. Socket.IO channels per depot, offline-tolerant driver app, and a map that stays smooth with 300 moving markers.</p>
+            <div class="metric">↗ 1,100 concurrent sockets, no drops</div>
+            <div class="tags"><span class="tag">React</span><span class="tag">Socket.IO</span><span class="tag">Node</span><span class="tag">Mapbox</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-type="saas">
+          <div class="thumb" style="background:linear-gradient(135deg,var(--surface-2),var(--accent-soft))"><b>SaaS · 2024</b></div>
+          <div class="card-body">
+            <h3>ClinicQueue</h3>
+            <p>Appointment and records platform for a chain of eight clinics. HIPAA-minded data handling, audit logging on every write, and SMS reminders through Twilio.</p>
+            <div class="metric">↘ No-show rate down 22%</div>
+            <div class="tags"><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">MongoDB</span><span class="tag">Twilio</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-type="commerce">
+          <div class="thumb" style="background:linear-gradient(135deg,var(--accent-soft),var(--surface-2))"><b>Marketplace · 2024</b></div>
+          <div class="card-body">
+            <h3>Craftline Market</h3>
+            <p>Two-sided marketplace for independent makers. Split payouts via Stripe Connect, seller onboarding with KYC, and a dispute workflow built with the support team.</p>
+            <div class="metric">↗ $480K processed in year one</div>
+            <div class="tags"><span class="tag">React</span><span class="tag">Node</span><span class="tag">Stripe Connect</span><span class="tag">AWS S3</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-type="realtime">
+          <div class="thumb" style="background:linear-gradient(135deg,var(--surface-2),var(--accent-soft))"><b>Rescue · 2023</b></div>
+          <div class="card-body">
+            <h3>Lumen Learning Hub</h3>
+            <p>Inherited an LMS that fell over during live classes. Rewrote the video session layer, added Redis-backed presence, and introduced a test suite before touching features.</p>
+            <div class="metric">↘ Crash reports down from 60/wk to 2</div>
+            <div class="tags"><span class="tag">React</span><span class="tag">WebRTC</span><span class="tag">Redis</span><span class="tag">Jest</span></div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="experience">
+    <div class="wrap">
+      <p class="eyebrow">Experience</p>
+      <div class="sec-head">
+        <h2>Five years, three chairs</h2>
+        <p>Ordered most recent first — each role built on the gap the last one exposed.</p>
+      </div>
+      <div class="timeline">
+        <div class="job">
+          <time>2024 — Present</time>
+          <h3>Independent Full-Stack Developer</h3>
+          <div class="where">Freelance · Remote</div>
+          <p>Contract work for startups and agencies in the UK, US and UAE. Typical engagement runs 6–14 weeks: scoping, build, deployment, then a documented handover. Three clients have stayed on monthly retainers for maintenance and feature work.</p>
+        </div>
+        <div class="job">
+          <time>2022 — 2024</time>
+          <h3>Senior MERN Developer</h3>
+          <div class="where">Northbay Digital</div>
+          <p>Led a team of four on client SaaS builds. Standardised the agency's Node service template, introduced GitHub Actions pipelines across 11 repos, and cut the average new-project setup from five days to one.</p>
+        </div>
+        <div class="job">
+          <time>2021 — 2022</time>
+          <h3>Web Developer</h3>
+          <div class="where">Axle Logistics</div>
+          <p>First engineering hire on an internal tooling team. Rebuilt the shipment tracking portal in React and took the Express API from unversioned routes to a documented, tested surface used by two partner integrations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reviews">
+    <div class="wrap">
+      <p class="eyebrow">Reviews</p>
+      <div class="sec-head">
+        <h2>What clients say afterwards</h2>
+        <p>Collected from project wrap-ups and freelance platform reviews.</p>
+      </div>
+      <div class="quotes">
+        <div class="quote">
+          <div class="stars" aria-label="5 out of 5">★★★★★</div>
+          <p>Ali rebuilt a dashboard two agencies had already given up on. He asked harder questions in week one than anyone had in six months, and the thing has not gone down since launch.</p>
+          <div class="who"><div class="av">SK</div><div><b>Sarah Keating</b><span>CTO, Meridian Analytics</span></div></div>
+        </div>
+        <div class="quote">
+          <div class="stars" aria-label="5 out of 5">★★★★★</div>
+          <p>Checkout was losing us orders and we could not work out why. He found three separate issues, fixed them in a week, and showed us the before-and-after numbers instead of just saying it was done.</p>
+          <div class="who"><div class="av">DM</div><div><b>Daniel Mwangi</b><span>Founder, Thread &amp; Tonic</span></div></div>
+        </div>
+        <div class="quote">
+          <div class="stars" aria-label="5 out of 5">★★★★★</div>
+          <p>Clear communication across a seven-hour time difference, daily written updates, and zero surprises on the invoice. Rare combination. We have booked him for the next phase already.</p>
+          <div class="who"><div class="av">RP</div><div><b>Rebecca Pearce</b><span>Product Lead, ClinicQueue</span></div></div>
+        </div>
+        <div class="quote">
+          <div class="stars" aria-label="5 out of 5">★★★★★</div>
+          <p>He handed over documentation our in-house team could actually follow. Six months later we are still extending his code rather than rewriting it, which says everything.</p>
+          <div class="who"><div class="av">JT</div><div><b>Jonas Thorne</b><span>Engineering Manager, Northbay Digital</span></div></div>
+        </div>
+        <div class="quote">
+          <div class="stars" aria-label="4.5 out of 5">★★★★☆</div>
+          <p>Excellent build quality. I would have liked a little more design input early on, but once we brought in a designer he implemented it pixel for pixel and improved on a few of our ideas.</p>
+          <div class="who"><div class="av">AN</div><div><b>Aisha Noor</b><span>Operations Director, Dispatch Grid</span></div></div>
+        </div>
+        <div class="quote">
+          <div class="stars" aria-label="5 out of 5">★★★★★</div>
+          <p>We needed Stripe Connect done correctly, with payouts and disputes handled properly. Ali understood the financial edge cases better than our own accountant did.</p>
+          <div class="who"><div class="av">MC</div><div><b>Marco Civelli</b><span>Co-founder, Craftline Market</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="wrap">
+      <p class="eyebrow">Contact</p>
+      <div class="contact">
+        <div>
+          <h2 style="font-size:clamp(26px,3.6vw,40px);font-weight:800">Have something that needs building?</h2>
+          <p style="color:var(--muted);margin-top:16px;max-width:48ch">Tell me what the app has to do and when you need it. I reply within 12 hours with either a plan and a quote, or an honest note that I'm not the right fit.</p>
+          <div class="copyrow">
+            <code id="email">hello@muhammadali.dev</code>
+            <button class="btn btn-ghost" id="copybtn" type="button">Copy</button>
+          </div>
+          <p class="mini" style="margin-top:14px">Lahore, Pakistan · UTC+5 · Usually online 09:00–19:00</p>
+          <p class="mini" style="margin-top:6px">github.com/muhammadali-dev · linkedin.com/in/muhammadali-dev</p>
+        </div>
+
+        <form id="form" novalidate>
+          <div class="two">
+            <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" type="text" placeholder="Jane Doe" required></div>
+            <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" placeholder="jane@company.com" required></div>
+          </div>
+          <div class="two">
+            <div class="field">
+              <label for="f-type">Project type</label>
+              <select id="f-type" name="type">
+                <option>SaaS dashboard</option>
+                <option>E-commerce / marketplace</option>
+                <option>API or backend work</option>
+                <option>Fixing an existing app</option>
+                <option>Something else</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-budget">Budget range</label>
+              <select id="f-budget" name="budget">
+                <option>Under $2,000</option>
+                <option>$2,000 – $6,000</option>
+                <option>$6,000 – $15,000</option>
+                <option>$15,000+</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label for="f-msg">What are you building?</label><textarea id="f-msg" name="message" placeholder="A short description, the deadline, and anything already built."></textarea></div>
+          <button class="btn btn-primary" type="submit" style="justify-content:center">Send enquiry</button>
+          <div class="sent" id="sent" hidden>Thanks — this is a demo form, so nothing was sent. Email hello@muhammadali.dev to reach me for real.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 Muhammad Ali · Full-stack web developer</span>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var btn=document.getElementById('menubtn'),links=document.getElementById('navlinks');
+  btn.addEventListener('click',function(){
+    var open=links.classList.toggle('open');
+    btn.setAttribute('aria-expanded',String(open));
+    btn.textContent=open?'CLOSE':'MENU';
+  });
+  links.addEventListener('click',function(e){
+    if(e.target.tagName==='A'){links.classList.remove('open');btn.setAttribute('aria-expanded','false');btn.textContent='MENU';}
+  });
+
+  var filters=document.querySelectorAll('.filter');
+  var cards=document.querySelectorAll('#projects .card');
+  filters.forEach(function(f){
+    f.addEventListener('click',function(){
+      filters.forEach(function(x){x.setAttribute('aria-pressed','false');});
+      f.setAttribute('aria-pressed','true');
+      var v=f.dataset.f;
+      cards.forEach(function(c){c.hidden=!(v==='all'||c.dataset.type===v);});
+    });
+  });
+
+  var copy=document.getElementById('copybtn');
+  copy.addEventListener('click',function(){
+    var text=document.getElementById('email').textContent;
+    var done=function(){copy.textContent='Copied';setTimeout(function(){copy.textContent='Copy';},1800);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(select);
+    }else{select();}
+    function select(){
+      var r=document.createRange();r.selectNodeContents(document.getElementById('email'));
+      var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+      copy.textContent='Select + copy';setTimeout(function(){copy.textContent='Copy';},2200);
+    }
+  });
+
+  document.getElementById('form').addEventListener('submit',function(e){
+    e.preventDefault();
+    document.getElementById('sent').hidden=false;
+  });
+})();
+</script>
